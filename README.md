@@ -36,7 +36,103 @@ Output: -1
 
 7. Completely lost how to adapt the algorithms into the solution.
 
-8.
+8. Got a hint from other people's solution, trying to make graph.
+
+9. Faced runtime error wrong answer with first attempt.
+
+```js
+var networkDelayTime = function (times, n, k) {
+  const graph = {};
+  for (let i = 1; i < n; i++) {
+    graph[i] = {};
+  }
+  for (const [u, v, w] of times) {
+    graph[u][v] = w;
+  }
+
+  const distances = {};
+  const queue = [];
+  const visited = new Set();
+
+  for (let node in graph) {
+    if (node === n) {
+      distances[node] = 0;
+      queue.push([node, 0]);
+    } else {
+      distances[node] = Infinity;
+    }
+  }
+
+  while (queue.length > 0) {
+    queue.sort((a, b) => a[1] - b[1]);
+    const [currentNode] = queue.shift();
+
+    if (visited.has(currentNode)) continue;
+    visited.add(currentNode);
+
+    for (let neighbor in graph[currentNode]) {
+      const weight = graph[currentNode][neighbor];
+      const newDistance = distances[currentNode] + weight;
+      const oldDistance = distances[neighbor];
+
+      if (newDistance < oldDistance) {
+        distances[neighbor] = newDistance;
+        queue.push([neighbor, newDistance]);
+      }
+    }
+  }
+  return distances;
+};
+```
+
+10. Tried to console.log in between code, could not find why I was keep failing at all.
+
+11. Realized I was just returning the whole object.
+
+12. Re-write code to find Max Distance to return.
+
+```js
+var networkDelayTime = function (times, n, k) {
+  // ...same code above
+  let maxDistance = 0;
+  for (const node in distances) {
+    if (distances[node] > maxDistance) {
+      maxDistance = distances[node];
+    }
+  }
+
+  return maxDistance === Infinity ? -1 : maxDistance;
+};
+```
+
+13. Getting wrong answers, tried to debug but failed.
+
+14. Used ChatGPT what would be the problems.
+
+15. Found the source of the error, iterating approach was and changing the code.
+
+```js
+for (let node in graph) {
+  if (node === n) {
+    distances[node] = 0;
+    queue.push([node, 0]);
+  } else {
+    distances[node] = Infinity;
+  }
+}
+
+// to
+for (let node = 1; node <= n; node++) {
+  if (node === k) {
+    distances[node] = 0;
+    queue.push([node, 0]);
+  } else {
+    distances[node] = Infinity;
+  }
+}
+```
+
+16. Everything works, however, still not fully understood about why iterating approach is different.
 
 ## 912. Sort Array
 
